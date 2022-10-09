@@ -4,7 +4,7 @@ class Animate {
         this.spritedata = data;
         this.animation = [];
         this.index = 0;
-        if (sheet) {
+        if (sheet && data) {
             let frames = this.spritedata.frames;
             for (let i = 0; i < frames.length; i++) {
                 let pos = frames[i].position;
@@ -12,7 +12,7 @@ class Animate {
                 this.animation.push(img);
             }
         } else {
-            this.animation.push(data);
+            this.animation.push(this.spritesheet);
         }
     }
     get(i) {

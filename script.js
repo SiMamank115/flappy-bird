@@ -10,7 +10,10 @@ function preload() {
     sprite.data.idle = loadJSON("idle.json");
     sprite.sheet.fly = loadImage("/assets/fly-small.png");
     sprite.sheet.idle = loadImage("/assets/idle-small.png");
+    sprite.sheet.pipe = [];
+    sprite.sheet.pipe[0] = loadImage("/assets/pipe-2.png");
     blocks.push(new Block(100, 350, 0, 200));
+    blocks.push(new Block(400, 430, 220, 70,undefined,{idle:new Animate(sprite.sheet.pipe[0])}));
 }
 function setup() {
     createCanvas(960, 540);
@@ -22,8 +25,6 @@ function setup() {
 function draw() {
     background(255);
     bird.display();
-    // testingBlock.display();
-    // testingBlock.update();
     blocks.forEach((e) => {
         !e.die && (e.display() || e.update());
     });
