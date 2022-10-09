@@ -1,25 +1,7 @@
-collision(pipe = new Pipe(),action = true) {
-        let r1 = {
-                x:this.position.x - this.radius,
-                y:this.position.y - this.radius,
-                w:this.width,
-                h:this.width
-            },
-            r2 = {
-                x:pipe.position.x - pipe.width*.5,
-                y:pipe.position.y - pipe.height*.5,
-                h:pipe.height,
-                w:pipe.width
-            },
-            collide = !(r1.x > r2.x + r2.w || r1.x + r1.w < r2.x || r1.y > r2.y + r2.h || r1.y + r1.h < r2.y),
-            velocity = this.velocity
-            if(!action) return {collide,velocity}
-            if(collide) {
-                this.velocity = createVector(0, 0)
-                if(velocity.y > 0) {
-                    this.position.y = r2.y - this.radius
-                }
-            }
-            // if(collide) this.position.add(p5.Vector.mult(this.velocity,-1))
-            return
-    }
+saat velocity kotak == velocity block, kotak akan mengurangi velocity
+nya karena rem,
+
+
+
+Main problem :
+- brake [ solved ]

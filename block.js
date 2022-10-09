@@ -1,4 +1,4 @@
-class Pipe {
+class Block {
     constructor(x, y, h, dir) {
         this.dir = dir != "UP" || dir != "DOWN" ? "UP" : dir;
         this.position = createVector(x, y);

@@ -49,18 +49,18 @@ class Bird {
             .rect(0, 0, this.radius, this.radius, 0, 10, 10, 0)
             .pop();
     }
-    collision(pipe = new Pipe(), action = true) {
+    collision(block = new Block(), action = true) {
         let dir = {
                 top: this.position.y - this.radius,
                 left: this.position.x - this.radius,
                 bottom: this.position.y + this.radius,
                 right: this.position.x + this.radius,
             },
-            dirPipe = {
-                top: pipe.position.y - pipe.height * 0.5,
-                left: pipe.position.x - pipe.width * 0.5,
-                bottom: pipe.position.y + pipe.height * 0.5,
-                right: pipe.position.x + pipe.width * 0.5,
+            dirBlock = {
+                top: block.position.y - block.height * 0.5,
+                left: block.position.x - block.width * 0.5,
+                bottom: block.position.y + block.height * 0.5,
+                right: block.position.x + block.width * 0.5,
             },
             dirOld = {
                 top: this.old.y - this.radius,
@@ -68,37 +68,35 @@ class Bird {
                 bottom: this.old.y + this.radius,
                 right: this.old.x + this.radius
             },
-            dirPipeOld = {
-                top: pipe.old.y - pipe.height * 0.5,
-                left: pipe.old.x - pipe.width * 0.5,
-                bottom: pipe.old.y + pipe.height * 0.5,
-                right: pipe.old.x + pipe.width * 0.5,
+            dirBlockOld = {
+                top: block.old.y - block.height * 0.5,
+                left: block.old.x - block.width * 0.5,
+                bottom: block.old.y + block.height * 0.5,
+                right: block.old.x + block.width * 0.5,
             },
             // collide = !(r1.x>r2.x+r2.w || r1.x+r1.w<r2.x || r1.y>r2.y+r2.h || r1.y+r1.h<r2.y),
-            collide = !(dir.left > dirPipe.right || dir.right < dirPipe.left || dir.top > dirPipe.bottom || dir.bottom < dirPipe.top),
+            collide = !(dir.left > dirBlock.right || dir.right < dirBlock.left || dir.top > dirBlock.bottom || dir.bottom < dirBlock.top),
             velocity = this.velocity,
-            pipeVelocity = pipe.velocity;
+            blockVelocity = block.velocity;
         if (!action) return { collide, velocity };
         if (collide) {
             // top
-            if (dir.top < dirPipe.bottom && dirOld.top > dirPipeOld.bottom) {
-                this.position.y = dirPipe.bottom + this.radius + .1;
-                this.velocity.y = pipeVelocity.y;
+            if (dir.top < dirBlock.bottom && dirOld.top > dirBlockOld.bottom) {
+                this.position.y = dirBlock.bottom + this.radius + .1;
+                this.velocity.y = blockVelocity.y;
             }
             // bottom
-            if (dir.bottom > dirPipe.top && dirOld.bottom < dirPipeOld.top) {
-                this.position.y = dirPipe.top - this.radius - .1;
-                this.velocity.y = pipeVelocity.y;
+            if (dir.bottom > dirBlock.top && dirOld.bottom < dirBlockOld.top) {
+                this.position.y = dirBlock.top - this.radius - .1;
+                this.velocity.y = 0;
             }
             // left
-            if (dir.left < dirPipe.right && dirOld.left > dirPipeOld.right) {
-                this.position.x = dirPipe.right + this.radius + .1;
-                this.velocity.x = pipeVelocity.x;
+            if (dir.left < dirBlock.right && dirOld.left > dirBlockOld.right) {
+                this.position.x = dirBlock.right + this.radius + .1;
             }
             // right
-            if (dir.right > dirPipe.left && dirOld.right < dirPipeOld.left) {
-                this.position.x = dirPipe.left - this.radius - .1;
-                this.velocity.x = pipeVelocity.x;
+            if (dir.right > dirBlock.left && dirOld.right < dirBlockOld.left) {
+                this.position.x = dirBlock.left - this.radius - .1;
             }
         }
         return;
