@@ -10,6 +10,9 @@ class Bird {
         this.width = this.radius * 2;
         this.jump = 0;
         this.goJump = false;
+        this.turn = "right";
+        this.animationIndex = 0;
+        this.animationIdleIndex = 0;
     }
     jumping() {
         (this.jump = 10), (this.velocity.y = 0), (this.goJump = !1);
@@ -36,10 +39,27 @@ class Bird {
         this.acceleration.mult(0);
     }
     display() {
+        this.animationIndex += .25
+        this.animationIdleIndex += .05
         let vy = this.velocity.y,
-            rotation = (vy > 5 ? 5 : vy < -5 ? -5 : vy) * 14;
-        push();
-        stroke(0).fill(0).translate(this.position.x, this.position.y).rotate(radians(rotation)).rectMode(RADIUS).rect(0, 0, this.radius, this.radius, 0, 10, 10, 0).pop();
+            // rotation = (vy > 5 ? 5 : vy < -5 ? -5 : vy) * 14 * (this.turn=="right"?1:-1) + (this.turn=="right"?0:180);
+            rotation = (vy > 5 ? 5 : vy < -5 ? -5 : vy) * 4;
+            push();
+        stroke(0)
+        .fill(0)
+        .translate(this.position.x, this.position.y)
+        scale((this.turn=="right"?-1:1), 1)
+        .rotate(radians(-rotation))
+        .imageMode(CENTER)
+        image(this.velocity.y != 0?
+            birdAnimation[floor(this.animationIndex)]:
+            this.velocity.x != 0?
+            idleAnimation[round(this.animationIdleIndex)]:
+            idleAnimation[1],0,0)
+        // .rect(0, 0, this.radius, this.radius, 0, 10, 10, 0)
+        pop();
+        this.animationIndex %= 2
+        this.animationIdleIndex %= 1
     }
     collision(block = new Block(), action = true) {
         let dir = {
@@ -113,11 +133,13 @@ class Bird {
             this.position.y = this.radius;
         }
     }
-    turning(right = true) {
-        if (right) {
-            this.acceleration.add(createVector(-1, 0));
-        } else {
+    turning(left = true) {
+        if (!left) {
             this.acceleration.add(createVector(1, 0));
+            this.turn = "right"
+        } else {
+            this.acceleration.add(createVector(-1, 0));
+            this.turn = "left"
         }
     }
 }

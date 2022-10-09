@@ -1,7 +1,32 @@
+let bird,
+    blocks = [],
+    spritedataFly,
+    spritedataIdle,
+    spritesheetFly,
+    spritesheetIdle,
+    birdAnimation = []
+    idleAnimation = [];
+function preload() {
+    spritedataFly = loadJSON("bird.json");
+    spritedataIdle = loadJSON("idle.json");
+    spritesheetFly = loadImage("/assets/fly.png");
+    spritesheetIdle = loadImage("/assets/idle.png");
+}
 function setup() {
     createCanvas(960, 540);
-    this.bird = new Bird(100, 100, 2.5);
-    this.blocks = [];
+    bird = new Bird(100, 100, 2.5);
+    let frames = spritedataFly.frames;
+    for (let i = 0; i < frames.length; i++) {
+        let pos = frames[i].position;
+        let img = spritesheetFly.get(pos.x, pos.y, pos.w, pos.h);
+        birdAnimation.push(img);
+    }
+    let frames2 = spritedataIdle.frames;
+    for (let i = 0; i < frames2.length; i++) {
+        let pos = frames2[i].position;
+        let img = spritesheetIdle.get(pos.x, pos.y, pos.w, pos.h);
+        idleAnimation.push(img);
+    }
 }
 function draw() {
     background(255);
