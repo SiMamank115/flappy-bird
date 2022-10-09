@@ -12,9 +12,7 @@ class Bird {
         this.goJump = false;
     }
     jumping() {
-        this.jump = 10;
-        this.velocity.y = 0;
-        this.goJump = false;
+        (this.jump = 10), (this.velocity.y = 0), (this.goJump = !1);
     }
     update() {
         this.velocity.x > 4 && (this.velocity.x = 4);
@@ -33,7 +31,7 @@ class Bird {
             this.acceleration.add(createVector(-turnBrake, 0));
         }
         this.velocity.add(this.acceleration);
-        (frameCount % 2 && (this.old = createVector(this.position.x, this.position.y)));
+        frameCount % 2 && (this.old = createVector(this.position.x, this.position.y));
         this.position.add(this.velocity);
         this.acceleration.mult(0);
     }
@@ -41,13 +39,7 @@ class Bird {
         let vy = this.velocity.y,
             rotation = (vy > 5 ? 5 : vy < -5 ? -5 : vy) * 14;
         push();
-        stroke(0)
-            .fill(0)
-            .translate(this.position.x, this.position.y)
-            .rotate(radians(rotation))
-            .rectMode(RADIUS)
-            .rect(0, 0, this.radius, this.radius, 0, 10, 10, 0)
-            .pop();
+        stroke(0).fill(0).translate(this.position.x, this.position.y).rotate(radians(rotation)).rectMode(RADIUS).rect(0, 0, this.radius, this.radius, 0, 10, 10, 0).pop();
     }
     collision(block = new Block(), action = true) {
         let dir = {
@@ -66,7 +58,7 @@ class Bird {
                 top: this.old.y - this.radius,
                 left: this.old.x - this.radius,
                 bottom: this.old.y + this.radius,
-                right: this.old.x + this.radius
+                right: this.old.x + this.radius,
             },
             dirBlockOld = {
                 top: block.old.y - block.height * 0.5,
@@ -82,21 +74,21 @@ class Bird {
         if (collide) {
             // top
             if (dir.top < dirBlock.bottom && dirOld.top > dirBlockOld.bottom) {
-                this.position.y = dirBlock.bottom + this.radius + .1;
+                this.position.y = dirBlock.bottom + this.radius + 0.1;
                 this.velocity.y = blockVelocity.y;
             }
             // bottom
             if (dir.bottom > dirBlock.top && dirOld.bottom < dirBlockOld.top) {
-                this.position.y = dirBlock.top - this.radius - .1;
+                this.position.y = dirBlock.top - this.radius - 0.1;
                 this.velocity.y = 0;
             }
             // left
             if (dir.left < dirBlock.right && dirOld.left > dirBlockOld.right) {
-                this.position.x = dirBlock.right + this.radius + .1;
+                this.position.x = dirBlock.right + this.radius + 0.1;
             }
             // right
             if (dir.right > dirBlock.left && dirOld.right < dirBlockOld.left) {
-                this.position.x = dirBlock.left - this.radius - .1;
+                this.position.x = dirBlock.left - this.radius - 0.1;
             }
         }
         return;

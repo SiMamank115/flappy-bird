@@ -1,12 +1,12 @@
 class Block {
-    constructor(x, y, h, dir) {
-        this.dir = dir != "UP" || dir != "DOWN" ? "UP" : dir;
+    constructor(x, y, h, w, callback = function (e) {}) {
         this.position = createVector(x, y);
         this.height = h;
-        this.width = 30;
+        this.width = w;
         this.velocity = createVector(0, 0);
         this.old = createVector(0, 0);
         this.acceleration = createVector(0, 0);
+        this.callback = callback;
     }
     display() {
         push();
@@ -18,8 +18,9 @@ class Block {
     }
     update() {
         this.velocity.add(this.acceleration);
-        (frameCount % 2 && (this.old = createVector(this.position.x, this.position.y)));
+        frameCount % 2 && (this.old = createVector(this.position.x, this.position.y));
         this.position.add(this.velocity);
         this.acceleration.mult(0);
+        this.callback(this);
     }
 }
