@@ -1,32 +1,23 @@
 let bird,
     blocks = [],
-    spritedataFly,
-    spritedataIdle,
-    spritesheetFly,
-    spritesheetIdle,
-    birdAnimation = []
-    idleAnimation = [];
+    sprite = {
+        data:{},
+        sheet:{}
+    }
+
 function preload() {
-    spritedataFly = loadJSON("bird.json");
-    spritedataIdle = loadJSON("idle.json");
-    spritesheetFly = loadImage("/assets/fly.png");
-    spritesheetIdle = loadImage("/assets/idle.png");
+    sprite.data.fly = loadJSON("bird.json");
+    sprite.data.idle = loadJSON("idle.json");
+    sprite.sheet.fly = loadImage("/assets/fly-small.png");
+    sprite.sheet.idle = loadImage("/assets/idle-small.png");
+    blocks.push(new Block(100, 350, 0, 200));
 }
 function setup() {
     createCanvas(960, 540);
-    bird = new Bird(100, 100, 2.5);
-    let frames = spritedataFly.frames;
-    for (let i = 0; i < frames.length; i++) {
-        let pos = frames[i].position;
-        let img = spritesheetFly.get(pos.x, pos.y, pos.w, pos.h);
-        birdAnimation.push(img);
-    }
-    let frames2 = spritedataIdle.frames;
-    for (let i = 0; i < frames2.length; i++) {
-        let pos = frames2[i].position;
-        let img = spritesheetIdle.get(pos.x, pos.y, pos.w, pos.h);
-        idleAnimation.push(img);
-    }
+    bird = new Bird(100, 100, 2.5, {
+        idle: new Animate(sprite.sheet.idle, sprite.data.idle),
+        fly: new Animate(sprite.sheet.fly, sprite.data.fly),
+    });
 }
 function draw() {
     background(255);
@@ -45,9 +36,9 @@ function draw() {
         !e.die && bird.collision(e);
     });
     events();
-    document.querySelector("p#vel").innerHTML = bird.velocity.x + "<br>" + bird.velocity.y;
+    document.querySelector("p#vel").innerHTML = round(bird.velocity.x) + "<br>" + round(bird.velocity.y);
     // document.querySelector("p#vel").innerHTML = bird.position.y + "<br>" + bird.old.y;
-    // document.querySelector("p#col").textContent = bird.collision(testingBlock, false).collide;
+    document.querySelector("p#col").textContent = "";
 }
 function events() {
     if (keyIsDown(87)) {

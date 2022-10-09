@@ -1,5 +1,5 @@
 class Bird {
-    constructor(x, y, m) {
+    constructor(x = 0, y = 0, m = 0, a = {}) {
         this.position = createVector(x, y);
         this.old = createVector(x, y);
         this.mass = m;
@@ -11,8 +11,8 @@ class Bird {
         this.jump = 0;
         this.goJump = false;
         this.turn = "right";
-        this.animationIndex = 0;
-        this.animationIdleIndex = 0;
+        if (a["fly"]) this.fly = a.fly;
+        if (a["idle"]) this.idle = a.idle;
     }
     jumping() {
         (this.jump = 10), (this.velocity.y = 0), (this.goJump = !1);
@@ -39,27 +39,21 @@ class Bird {
         this.acceleration.mult(0);
     }
     display() {
-        this.animationIndex += .25
-        this.animationIdleIndex += .05
+        this.fly.timeLine(0.25);
+        this.idle.timeLine(0.05);
         let vy = this.velocity.y,
-            // rotation = (vy > 5 ? 5 : vy < -5 ? -5 : vy) * 14 * (this.turn=="right"?1:-1) + (this.turn=="right"?0:180);
             rotation = (vy > 5 ? 5 : vy < -5 ? -5 : vy) * 4;
-            push();
-        stroke(0)
-        .fill(0)
-        .translate(this.position.x, this.position.y)
-        scale((this.turn=="right"?-1:1), 1)
-        .rotate(radians(-rotation))
-        .imageMode(CENTER)
-        image(this.velocity.y != 0?
-            birdAnimation[floor(this.animationIndex)]:
-            this.velocity.x != 0?
-            idleAnimation[round(this.animationIdleIndex)]:
-            idleAnimation[1],0,0)
-        // .rect(0, 0, this.radius, this.radius, 0, 10, 10, 0)
+        push();
+        stroke(0);
+        fill(0);
+        translate(this.position.x, this.position.y);
+        scale(this.turn == "right" ? -1.5 : 1.5, 1.5);
+        rotate(radians(-rotation));
+        imageMode(CENTER);
+        image(this.velocity.y != 0 ? this.fly.get(floor(this.fly.getTimeLine())) : this.velocity.x != 0 ? this.idle.get(round(this.idle.getTimeLine())) : this.idle.get(1), 0, 0);
         pop();
-        this.animationIndex %= 2
-        this.animationIdleIndex %= 1
+        this.fly.timeLine();
+        this.idle.timeLine();
     }
     collision(block = new Block(), action = true) {
         let dir = {
@@ -136,10 +130,10 @@ class Bird {
     turning(left = true) {
         if (!left) {
             this.acceleration.add(createVector(1, 0));
-            this.turn = "right"
+            this.turn = "right";
         } else {
             this.acceleration.add(createVector(-1, 0));
-            this.turn = "left"
+            this.turn = "left";
         }
     }
 }
