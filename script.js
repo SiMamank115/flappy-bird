@@ -1,33 +1,36 @@
 let bird,
     blocks = [],
     sprite = {
-        data:{},
-        sheet:{}
-    }
+        data: {},
+        sheet: {},
+    },
+    imageData;
 
 function preload() {
-    sprite.data.fly = loadJSON("bird.json");
-    sprite.data.idle = loadJSON("idle.json");
-    sprite.sheet.fly = loadImage("/assets/fly-small.png");
-    sprite.sheet.idle = loadImage("/assets/idle-small.png");
-    sprite.sheet.pipe = [];
-    sprite.sheet.pipe[0] = loadImage("/assets/pipe-2.png");
-    blocks.push(new Block(100, 350, 0, 200));
-    blocks.push(new Block(400, 430, 220, 70,undefined,{idle:new Animate(sprite.sheet.pipe[0])}));
+    imageData = loadJSON("/assets/data.json", (cb) => {
+        let queue = Object.keys(cb);
+        queue.forEach((e) => {
+            texture.init(cb[e]);
+        });
+    });
 }
 function setup() {
     createCanvas(960, 540);
     bird = new Bird(100, 100, 2.5, {
-        idle: new Animate(sprite.sheet.idle, sprite.data.idle),
-        fly: new Animate(sprite.sheet.fly, sprite.data.fly),
+        "bird-fly": texture.animations["bird-fly"],
+        "bird-idle": texture.animations["bird-idle"],
+        main: "bird-fly",
     });
+    blocks.push(new Block(200,430,function(){},{
+        "idle":texture.sheet["pipe-2"]
+    }))
 }
 function draw() {
     background(255);
-    bird.display();
     blocks.forEach((e) => {
         !e.die && (e.display() || e.update());
     });
+    bird.display();
     bird.update();
     bird.applyGravity();
     bird.checkEdges();

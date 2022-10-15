@@ -3,16 +3,29 @@ class Bird {
         this.position = createVector(x, y);
         this.old = createVector(x, y);
         this.mass = m;
-        this.gravity = createVector(0, 0.2);
+        this.gravity = createVector(0, 0.2125);
         this.velocity = createVector(0, 0);
         this.acceleration = createVector(0, 0);
-        this.radius = this.mass * 8;
-        this.width = this.radius * 2;
         this.jump = 0;
         this.goJump = false;
         this.turn = "right";
-        if (a["fly"]) this.fly = a.fly;
-        if (a["idle"]) this.idle = a.idle;
+        if (a["bird-fly"] && a["bird-idle"]) {
+            this.tick = {
+                fly: 0,
+                idle: 0,
+            };
+            this.addTick = (e, x, l) => ((this.tick[e] += x), (this.tick[e] %= l));
+            this.animation = a;
+            let mainTexture = a["main"] ? a["main"] : "bird-fly";
+            this.radius = this.animation[mainTexture].collisionSize.width * 0.5;
+            this.radiusHeight = this.animation[mainTexture].collisionSize.height * 0.5;
+        } else {
+            this.animation = {};
+            this.radius = this.mass * 8;
+            this.radiusHeight = this.mass * 8;
+        }
+        this.width = this.radius * 2;
+        this.height = this.radiusHeight * 2;
     }
     jumping() {
         (this.jump = 10), (this.velocity.y = 0), (this.goJump = !1);
@@ -39,27 +52,32 @@ class Bird {
         this.acceleration.mult(0);
     }
     display() {
-        this.fly.timeLine(0.25);
-        this.idle.timeLine(0.05);
         let vy = this.velocity.y,
             rotation = (vy > 5 ? 5 : vy < -5 ? -5 : vy) * 4;
+
         push();
-        stroke(0);
-        fill(0);
+        stroke(0).rectMode(RADIUS);
+        noFill();
         translate(this.position.x, this.position.y);
-        scale(this.turn == "right" ? -1.5 : 1.5, 1.5);
-        rotate(radians(-rotation));
+        scale(this.turn == "right" ? -1 : 1, 1);
         imageMode(CENTER);
-        image(this.velocity.y != 0 ? this.fly.get(floor(this.fly.getTimeLine())) : this.velocity.x != 0 ? this.idle.get(round(this.idle.getTimeLine())) : this.idle.get(1), 0, 0);
+        if (!this.animation["bird-fly"] || !this.animation["bird-idle"]) {
+            rect(0, 0, this.width * 0.5, this.height * 0.5);
+        } else {
+            rotate(radians(-rotation));
+            let fly = this.animation["bird-fly"],
+                idle = this.animation["bird-idle"];
+            this.addTick("idle", 0.05, idle.animation.length - 1);
+            this.addTick("fly", 0.2, fly.animation.length - 1);
+            image(this.velocity.y != 0 ? fly.get(floor(this.tick.fly)) : this.velocity.x != 0 ? idle.get(round(this.tick.idle)) : idle.get(1), 0, 0, fly.size.width, fly.size.height);
+        }
         pop();
-        this.fly.timeLine();
-        this.idle.timeLine();
     }
     collision(block = new Block(), action = true) {
         let dir = {
-                top: this.position.y - this.radius,
+                top: this.position.y - this.radiusHeight,
                 left: this.position.x - this.radius,
-                bottom: this.position.y + this.radius,
+                bottom: this.position.y + this.radiusHeight,
                 right: this.position.x + this.radius,
             },
             dirBlock = {
@@ -69,9 +87,9 @@ class Bird {
                 right: block.position.x + block.width * 0.5,
             },
             dirOld = {
-                top: this.old.y - this.radius,
+                top: this.old.y - this.radiusHeight,
                 left: this.old.x - this.radius,
-                bottom: this.old.y + this.radius,
+                bottom: this.old.y + this.radiusHeight,
                 right: this.old.x + this.radius,
             },
             dirBlockOld = {
@@ -93,7 +111,7 @@ class Bird {
             }
             // bottom
             if (dir.bottom > dirBlock.top && dirOld.bottom < dirBlockOld.top) {
-                this.position.y = dirBlock.top - this.radius - 0.1;
+                this.position.y = dirBlock.top - this.radiusHeight - 0.1;
                 this.velocity.y = 0;
             }
             // left
@@ -119,12 +137,12 @@ class Bird {
         }
     }
     checkEdges() {
-        if (this.position.y > height - this.radius) {
+        if (this.position.y > height - this.radiusHeight) {
             this.velocity.y = 0;
-            this.position.y = height - this.radius;
-        } else if (this.position.y < this.radius) {
+            this.position.y = height - this.radiusHeight;
+        } else if (this.position.y < this.radiusHeight) {
             this.velocity.y = 0;
-            this.position.y = this.radius;
+            this.position.y = this.radiusHeight;
         }
     }
     turning(left = true) {

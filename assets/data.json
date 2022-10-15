@@ -1,0 +1,90 @@
+{
+    "bird-fly": {
+        "name": "bird-fly",
+        "url": "assets/fly-small.png",
+        "size": {
+            "width": 32,
+            "height": 24
+        },
+        "collisionSize": {
+            "width": 32,
+            "height": 24
+        },
+        "animated": true,
+        "frames": [
+            {
+                "name": "sprite-00",
+                "position": {
+                    "x": 0,
+                    "y": 0,
+                    "w": 30,
+                    "h": 24
+                }
+            },
+            {
+                "name": "sprite-01",
+                "position": {
+                    "x": 30,
+                    "y": 0,
+                    "w": 30,
+                    "h": 24
+                }
+            },
+            {
+                "name": "sprite-02",
+                "position": {
+                    "x": 60,
+                    "y": 0,
+                    "w": 30,
+                    "h": 24
+                }
+            }
+        ]
+    },
+    "bird-idle": {
+        "name": "bird-idle",
+        "url": "assets/idle-small.png",
+        "size": {
+            "width": 32,
+            "height": 24
+        },
+        "collisionSize": {
+            "width": 32,
+            "height": 24
+        },
+        "animated": true,
+        "frames": [
+            {
+                "name": "sprite-00",
+                "position": {
+                    "x": 0,
+                    "y": 0,
+                    "w": 30,
+                    "h": 26
+                }
+            },
+            {
+                "name": "sprite-01",
+                "position": {
+                    "x": 30,
+                    "y": 0,
+                    "w": 30,
+                    "h": 26
+                }
+            }
+        ]
+    },
+    "pipe-2": {
+        "name": "pipe-2",
+        "url": "assets/pipe-2.gif",
+        "size": {
+            "width": 70,
+            "height": 220
+        },
+        "collisionSize": {
+            "width": 40,
+            "height": 220
+        },
+        "animated": false
+    }
+}

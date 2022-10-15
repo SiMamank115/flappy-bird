@@ -1,21 +1,32 @@
 class Block {
-    constructor(x, y, h, w, callback = function (e) {}, a = {}) {
-        this.position = createVector(x, y);
-        this.height = h;
-        this.width = w;
+    constructor(x, y, height, width, callback, animation) {
         this.velocity = createVector(0, 0);
         this.old = createVector(0, 0);
         this.acceleration = createVector(0, 0);
+        this.position = createVector(x, y);
+        if(typeof height == "function") {
+                callback = height;
+            if(typeof width == "object") {
+                animation = width
+            }
+        }
+        this.height = height;
+        this.width = width;
         this.callback = callback;
-        if(a["idle"]) this.idle = a.idle;
+        if (animation["idle"]) {
+            this.idle = animation.idle;
+            console.log(this.idle);
+            this.height = this.idle.collisionSize.height;
+            this.width = this.idle.collisionSize.width;
+        }
     }
     display() {
         push();
         stroke(0).noFill().rectMode(RADIUS);
         if (this.idle) {
             // rect(this.position.x, this.position.y, this.width * 0.5, this.height * 0.5);
-            imageMode(CENTER)
-            image(this.idle.get(0), this.position.x, this.position.y, this.width*1, this.height)
+            imageMode(CENTER);
+            image(this.idle, this.position.x, this.position.y, this.idle.size.width, this.idle.size.height);
         } else {
             rect(this.position.x, this.position.y, this.width * 0.5, this.height * 0.5);
         }

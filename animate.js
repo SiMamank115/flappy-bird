@@ -1,31 +1,20 @@
-class Animate {
-    constructor(sheet, data) {
-        this.spritesheet = sheet;
-        this.spritedata = data;
-        this.animation = [];
-        this.index = 0;
-        if (sheet && data) {
-            let frames = this.spritedata.frames;
-            for (let i = 0; i < frames.length; i++) {
-                let pos = frames[i].position;
-                let img = this.spritesheet.get(pos.x, pos.y, pos.w, pos.h);
-                this.animation.push(img);
-            }
-        } else {
-            this.animation.push(this.spritesheet);
-        }
+const animate = (sheet,data) => {
+    if (!sheet || !data) return;
+    let res = [];
+    for (let i = 0; i < data.frames.length; i++) {
+        let pos = data.frames[i].position;
+        let img = sheet.get(pos.x, pos.y, pos.w, pos.h);
+        res.push(img);
     }
-    get(i) {
-        return this.animation[i];
+    return new Animation(res,data.size,data.collisionSize);
+};
+class Animation {
+    constructor(a,s,c) {
+        this.size = s
+        this.collisionSize = c
+        this.animation = a
     }
-    timeLine(a) {
-        if (a) {
-            this.index += a;
-        } else {
-            this.index %= this.animation.length - 1;
-        }
-    }
-    getTimeLine() {
-        return this.index;
+    get(e) {
+        return this.animation[e]
     }
 }
