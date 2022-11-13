@@ -1,20 +1,24 @@
+import { Animation, animate } from "./animate.js";
 class Texture {
     constructor() {
         this.list = [];
         this.sheet = {};
         this.animations = {};
     }
-    init(e) {
+    init(e,res) {
         loadImage(e.url,function(cb) {
             cb.size = e.size
             cb.collisionSize = e.collisionSize
-            texture.sheet[e.name] = cb;
-            texture.list.push(e.name)
+            res.sheet[e.name] = cb;
+            res.list.push(e.name)
             if(e.animated) {
-                texture.animations[e.name] = animate(cb,e);
+                res.animations[e.name] = animate(cb,e);
             }
+            console.log(true);
+        }, (e) => {
+            console.log(false);
         })
     }
 }
 
-const texture = new Texture();
+export const texture = new Texture();

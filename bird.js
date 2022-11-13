@@ -1,4 +1,4 @@
-class Bird {
+export class Bird {
     constructor(x = 0, y = 0, m = 0, a = {}) {
         this.position = createVector(x, y);
         this.old = createVector(x, y);
@@ -9,23 +9,21 @@ class Bird {
         this.jump = 0;
         this.goJump = false;
         this.turn = "right";
-        if (a["bird-fly"] && a["bird-idle"]) {
-            this.tick = {
-                fly: 0,
-                idle: 0,
-            };
-            this.addTick = (e, x, l) => ((this.tick[e] += x), (this.tick[e] %= l));
-            this.animation = a;
-            let mainTexture = a["main"] ? a["main"] : "bird-fly";
-            this.radius = this.animation[mainTexture].collisionSize.width * 0.5;
-            this.radiusHeight = this.animation[mainTexture].collisionSize.height * 0.5;
-        } else {
-            this.animation = {};
-            this.radius = this.mass * 8;
-            this.radiusHeight = this.mass * 8;
+        this.animation = {
+            "bird-fly": a["bird-fly"] ? a["bird-fly"] : undefined,
+            "bird-walk": a["bird-walk"] ? a["bird-walk"] : undefined,
+            "bird-idle": a["bird-idle"] ? a["bird-idle"] : undefined,
+        };
+        this.tick = {
+            fly: 0,
+            walk: 0,
+        };
+        if (this.animation["bird-idle"]) {
+            this.height = this.animation["bird-idle"].collisionSize.height;
+            this.radiusHeight = this.animation["bird-idle"].collisionSize.height * 0.5;
+            this.width = this.animation["bird-idle"].collisionSize.width;
+            this.radius = this.animation["bird-idle"].collisionSize.width * 0.5;
         }
-        this.width = this.radius * 2;
-        this.height = this.radiusHeight * 2;
     }
     jumping() {
         (this.jump = 10), (this.velocity.y = 0), (this.goJump = !1);
@@ -61,15 +59,18 @@ class Bird {
         translate(this.position.x, this.position.y);
         scale(this.turn == "right" ? -1 : 1, 1);
         imageMode(CENTER);
-        if (!this.animation["bird-fly"] || !this.animation["bird-idle"]) {
+        if (!this.animation["bird-fly"] || !this.animation["bird-walk"]) {
             rect(0, 0, this.width * 0.5, this.height * 0.5);
         } else {
             rotate(radians(-rotation));
             let fly = this.animation["bird-fly"],
+                walk = this.animation["bird-walk"],
                 idle = this.animation["bird-idle"];
-            this.addTick("idle", 0.05, idle.animation.length - 1);
-            this.addTick("fly", 0.2, fly.animation.length - 1);
-            image(this.velocity.y != 0 ? fly.get(floor(this.tick.fly)) : this.velocity.x != 0 ? idle.get(round(this.tick.idle)) : idle.get(1), 0, 0, fly.size.width, fly.size.height);
+            image(this.velocity.y != 0 ? fly.get(floor(this.tick.fly)) : this.velocity.x != 0 ? walk.get(round(this.tick.walk)) : idle, 0, 0, idle.size.width, idle.size.height);
+            this.tick.fly += 1;
+            this.tick.fly %= fly.animation.length;
+            this.tick.walk += 1;
+            this.tick.walk %= walk.animation.length;
         }
         pop();
     }
@@ -98,12 +99,19 @@ class Bird {
                 bottom: block.old.y + block.height * 0.5,
                 right: block.old.x + block.width * 0.5,
             },
-            // collide = !(r1.x>r2.x+r2.w || r1.x+r1.w<r2.x || r1.y>r2.y+r2.h || r1.y+r1.h<r2.y),
             collide = !(dir.left > dirBlock.right || dir.right < dirBlock.left || dir.top > dirBlock.bottom || dir.bottom < dirBlock.top),
             velocity = this.velocity,
             blockVelocity = block.velocity;
         if (!action) return { collide, velocity };
+        // console.log(dir.right , dirBlock.left);
+        // console.log(dir.left > dirBlock.right , dir.right < dirBlock.left , dir.top > dirBlock.bottom , dir.bottom < dirBlock.top);
         if (collide) {
+            // stairs
+            if (dir.bottom == dirBlock.top || (dir.bottom > dirBlock.top && dir.bottom - 1 < dirBlock.top)) {
+                this.position.y = dirBlock.top - this.radiusHeight - 0.1;
+                this.velocity.y > 0 ? (this.velocity.y = 0) : "";
+                return this.collision(block, action);
+            }
             // top
             if (dir.top < dirBlock.bottom && dirOld.top > dirBlockOld.bottom) {
                 this.position.y = dirBlock.bottom + this.radius + 0.1;
@@ -121,6 +129,8 @@ class Bird {
             // right
             if (dir.right > dirBlock.left && dirOld.right < dirBlockOld.left) {
                 this.position.x = dirBlock.left - this.radius - 0.1;
+                // console.log({ dir, dirBlock, dirOld, dirBlockOld });
+                // noLoop();
             }
         }
         return;

@@ -1,14 +1,18 @@
-const animate = (sheet,data) => {
+export function animate(sheet,data) {
     if (!sheet || !data) return;
     let res = [];
-    for (let i = 0; i < data.frames.length; i++) {
-        let pos = data.frames[i].position;
-        let img = sheet.get(pos.x, pos.y, pos.w, pos.h);
-        res.push(img);
+    if(data.frames.length > 0) {
+        for (let i = 0; i < data.frames.length; i++) {
+            let pos = data.frames[i].position;
+            let img = sheet.get(pos.x, pos.y, pos.w, pos.h);
+            res.push(img);
+        }
+    } else {
+        res = [sheet];
     }
     return new Animation(res,data.size,data.collisionSize);
 };
-class Animation {
+export class Animation {
     constructor(a,s,c) {
         this.size = s
         this.collisionSize = c

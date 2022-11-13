@@ -1,13 +1,13 @@
-class Block {
+export class Block {
     constructor(x, y, height, width, callback, animation) {
         this.velocity = createVector(0, 0);
         this.old = createVector(0, 0);
         this.acceleration = createVector(0, 0);
         this.position = createVector(x, y);
-        if(typeof height == "function") {
-                callback = height;
-            if(typeof width == "object") {
-                animation = width
+        if (typeof height == "function") {
+            callback = height;
+            if (typeof width == "object") {
+                animation = width;
             }
         }
         this.height = height;
@@ -15,18 +15,25 @@ class Block {
         this.callback = callback;
         if (animation["idle"]) {
             this.idle = animation.idle;
-            console.log(this.idle);
             this.height = this.idle.collisionSize.height;
             this.width = this.idle.collisionSize.width;
+            this.tick = {
+                idle: 0,
+            };
         }
     }
     display() {
         push();
         stroke(0).noFill().rectMode(RADIUS);
         if (this.idle) {
+            let idle = this.idle;
             // rect(this.position.x, this.position.y, this.width * 0.5, this.height * 0.5);
             imageMode(CENTER);
             image(this.idle, this.position.x, this.position.y, this.idle.size.width, this.idle.size.height);
+            if (idle.animation) {
+                this.tick.idle += 1;
+                this.tick.idle %= idle.animation.length;
+            }
         } else {
             rect(this.position.x, this.position.y, this.width * 0.5, this.height * 0.5);
         }
